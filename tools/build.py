@@ -220,7 +220,7 @@ def page(title, body, depth, current="", description=DESCRIPTION):
     <div class="crumb"><a class="brand" href="https://uig.me/">Estul Lachin</a><a class="section" href="{home}">Investigations</a></div>
     <nav>
       <a href="https://uig.me/#work" aria-current="page">Work</a>
-      <a href="https://uig.me/incidents/">Incident reports</a>
+      <a href="https://uig.me/writing/">Writing</a>
       <a href="https://uig.me/about/">About</a>
       <a href="https://uig.me/Estul-Lachin-Resume.pdf">Résumé</a>
     </nav>
@@ -302,7 +302,8 @@ def evidence_home(ctx):
     body = ["<h1>SOC field guide</h1>",
             '<p class="lead">What I actually did with Splunk, Microsoft Sentinel and Wazuh, on live data from '
             '<a href="https://uig.me/honeypot/">my honeypot</a>. Each number below comes from the tool itself '
-            "(Azure's incident log, Splunk's audit index), not from me typing it in.</p>"]
+            "(Azure's incident log, Splunk's audit index), not from me typing it in. The investigations I wrote up are "
+            'in <a href="https://uig.me/writing/investigations/">Writing</a>.</p>']
     if cards:
         body.append('<ul class="evidence">' + "".join(
             f'<li><span class="num">{e(n)}</span><span class="label">{e(lbl)}</span><span class="src">{src}</span></li>'

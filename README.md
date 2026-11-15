@@ -2,12 +2,12 @@
 
 Source of [uig.me/investigations](https://uig.me/investigations): evidence that I use Splunk, Microsoft Sentinel and Wazuh on
 real data, from [my honeypot](https://uig.me/honeypot), and a field guide I keep for myself.
+The investigations I write up are in the [writing](https://uig.me/writing) repo.
 
 | Section | Source | Who writes it |
 |---|---|---|
 | Evidence summary | `data/incidents.json`, `data/activity.json`, everything below | generated |
 | Incident ledger | `tools/incidents.py`: Sentinel's own `SecurityIncident` log, counts only | generated from my work |
-| Cases | `cases/<id>.md` (template: `cases/_template.md`) | me |
 | Recordings | `recordings/<id>.yml` + `recordings/media/` | me |
 | Playbooks | `playbooks/<id>.yml`, results in `results/verified.json` | queries verified by `tools/verify.py` |
 | Certificates | `certs.yml`, each with the issuer's verification link | me |
