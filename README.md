@@ -1,7 +1,7 @@
 # uig-guide
 
-Source of [guide.uig.me](https://guide.uig.me): evidence that I use Splunk, Microsoft Sentinel and Wazuh on
-real data, from [my honeypot](https://honeypot.uig.me), and a field guide I keep for myself.
+Source of [uig.me/investigations](https://uig.me/investigations): evidence that I use Splunk, Microsoft Sentinel and Wazuh on
+real data, from [my honeypot](https://uig.me/honeypot), and a field guide I keep for myself.
 
 | Section | Source | Who writes it |
 |---|---|---|

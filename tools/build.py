@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render guide.uig.me: evidence that I use Splunk, Microsoft Sentinel and Wazuh on real data.
+"""Render uig.me/investigations: evidence that I use Splunk, Microsoft Sentinel and Wazuh on real data.
 
 Sources (all in this repo):
   cases/<id>.md          my investigation reports on real honeypot incidents (front matter + Markdown);
@@ -34,7 +34,7 @@ import markdown
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = "https://guide.uig.me"
+SITE = "https://uig.me/investigations"
 REPO = "https://github.com/estul-lachin/uig-guide"
 OWNER = "Estul Lachin"
 TOOLS = {"splunk": "Splunk", "sentinel": "Microsoft Sentinel", "wazuh": "Wazuh"}
@@ -301,7 +301,7 @@ def evidence_home(ctx):
 
     body = ["<h1>SOC field guide</h1>",
             '<p class="lead">What I actually did with Splunk, Microsoft Sentinel and Wazuh, on live data from '
-            '<a href="https://honeypot.uig.me/">my honeypot</a>. Each number below comes from the tool itself '
+            '<a href="https://uig.me/honeypot/">my honeypot</a>. Each number below comes from the tool itself '
             "(Azure's incident log, Splunk's audit index), not from me typing it in.</p>"]
     if cards:
         body.append('<ul class="evidence">' + "".join(
