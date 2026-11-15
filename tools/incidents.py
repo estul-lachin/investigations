@@ -53,7 +53,8 @@ SecurityIncident
 | extend MyComments = countof(C, '"name":"') - countof(C, "Comment created from playbook")
     + iff(CloserKind == "person" and isnotempty(ClassificationComment), 1, 0)
 | project Day = format_datetime(FirstClosed, "yyyy-MM-dd"), Status, Classification, ClassificationReason,
-    CloserKind, MyComments, Minutes = datetime_diff("minute", FirstClosed, CreatedTime)
+    CloserKind, MyComments, Minutes = datetime_diff("minute", FirstClosed, CreatedTime),
+    Closed = format_datetime(FirstClosed, "yyyy-MM-ddTHH:mm:ss")
 """
 
 VERDICTS = {  # Sentinel classification + reason -> plain words
@@ -96,10 +97,38 @@ def verdict(r):
     return VERDICTS.get(key) or " ".join(x for x in key if x)
 
 
+# Closes less than BATCH_GAP apart form one run; a run of BATCH_MIN or more is a bulk close (several incidents
+# selected in the portal and closed with one verdict and one note). The site says so instead of letting a bulk
+# close read like hundreds of separate investigations.
+BATCH_GAP = datetime.timedelta(minutes=2)
+BATCH_MIN = 10
+
+
+def batches(mine):
+    """Split my closes into bulk runs and the rest. Returns (individual rows, [{"day", "count"}])."""
+    timed = sorted((datetime.datetime.fromisoformat(r["Closed"]), r) for r in mine if r.get("Closed"))
+    runs, cur = [], []
+    for t, r in timed:
+        if cur and t - cur[-1][0] > BATCH_GAP:
+            runs.append(cur)
+            cur = []
+        cur.append((t, r))
+    if cur:
+        runs.append(cur)
+    single, bulk = [r for r in mine if not r.get("Closed")], []
+    for run in runs:
+        if len(run) >= BATCH_MIN:
+            bulk.append({"day": run[0][0].strftime("%Y-%m-%d"), "count": len(run)})
+        else:
+            single += [r for _, r in run]
+    return single, bulk
+
+
 def stats(rows, now=None):
     now = now or datetime.datetime.now(datetime.timezone.utc)
     mine = [r for r in rows if r["CloserKind"] == "person"]
-    minutes = sorted(r["Minutes"] for r in mine if r["Minutes"] is not None and r["Minutes"] >= 0)
+    single, bulk = batches(mine)
+    minutes = sorted(r["Minutes"] for r in single if r["Minutes"] is not None and r["Minutes"] >= 0)
     daily = Counter(r["Day"] for r in mine)
     return {
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -109,6 +138,9 @@ def stats(rows, now=None):
         "closed_by_playbook": sum(1 for r in rows if r["CloserKind"] == "machine"),
         "closed_by_me": len(mine),
         "with_my_comment": sum(1 for r in mine if (r["MyComments"] or 0) > 0),
+        "closed_individually": len(single),
+        "bulk_closes": bulk,
+        # median for the incidents closed one by one; a bulk close would only measure the backlog
         "close_minutes_median": round(statistics.median(minutes)) if minutes else None,
         "classification": dict(Counter(verdict(r) for r in mine).most_common()),
         "daily": [{"day": d, "closed_by_me": daily[d]} for d in sorted(daily)],
@@ -131,7 +163,8 @@ def main(argv=None):
         json.dump(s, f, indent=1)
         f.write("\n")
     print(f"{s['incidents']} incidents since {s['since']}: {s['closed_by_me']} closed by me "
-          f"({s['with_my_comment']} with a comment), {s['closed_by_playbook']} by automation, {s['open']} open")
+          f"({s['closed_individually']} one by one, {sum(b['count'] for b in s['bulk_closes'])} in "
+          f"{len(s['bulk_closes'])} bulk close(s)), {s['closed_by_playbook']} by automation, {s['open']} open")
     return 0
 
 

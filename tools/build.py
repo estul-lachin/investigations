@@ -220,7 +220,6 @@ def page(title, body, depth, current="", description=DESCRIPTION):
     <a class="brand" href="https://uig.me/">{OWNER}</a>
     <nav>
       <a href="https://lab.uig.me/">Labs</a>
-      <a href="https://lab.uig.me/timeline/">Timeline</a>
       <a href="https://honeypot.uig.me/">Honeypot</a>
       <a href="https://detections.uig.me/">Detections</a>
       <a href="{home}" aria-current="page">Guide</a>
@@ -282,11 +281,8 @@ def evidence_home(ctx):
                                                            "recordings", "certs"))
     cards = []
     if inc and inc.get("closed_by_me"):
-        med = inc.get("close_minutes_median")
         cards.append((f'{inc["closed_by_me"]:,}', "real incidents I closed",
-                      f'{inc["with_my_comment"]:,} with my written reasoning'
-                      + (f" · median {duration(med)} from alert to my verdict" if med is not None else "")
-                      + ' · <a href="#incidents">ledger</a>'))
+                      close_breakdown(inc) + ' · <a href="#incidents">ledger</a>'))
     if cases:
         cards.append((str(len(cases)), "investigation reports", '<a href="cases/">read them</a>'))
     if recs:
@@ -326,6 +322,32 @@ def evidence_home(ctx):
     return page("", "\n".join(body), 0, "home")
 
 
+BULK_NOTE = (" A bulk close below means several incidents selected together in the portal and closed with one "
+             "verdict and one note.")
+
+
+def close_breakdown(inc):
+    """How my closes split into one-by-one and bulk, so a bulk close never reads as hundreds of investigations."""
+    total = inc["closed_by_me"]
+    if "bulk_closes" in inc:
+        bulk = inc["bulk_closes"]
+        n = sum(b["count"] for b in bulk)
+        parts = [f'{inc.get("closed_individually", total - n):,} one by one']
+        if bulk:
+            days = sorted({b["day"] for b in bulk})
+            parts.append(f'{n:,} in {plural(len(bulk), "bulk close")} ({", ".join(e(d) for d in days)})')
+        med = inc.get("close_minutes_median")
+        if med is not None:
+            parts.append(f"median {duration(med)} from alert to verdict, one by one")
+        return " · ".join(parts)
+    # older incidents.json without close times: show the busiest day instead of guessing at batches
+    daily = inc.get("daily") or []
+    top = max(daily, key=lambda d: d["closed_by_me"], default=None)
+    if top and top["closed_by_me"] * 2 >= total and top["closed_by_me"] < total:
+        return f'{top["closed_by_me"]:,} of them on {e(top["day"])} alone'
+    return f'{plural(len(daily), "day")} with closes'
+
+
 def incident_section(inc):
     cls = inc.get("classification") or {}
     rows = "".join(f"<tr><td>{e(k)}</td><td>{v:,}</td></tr>" for k, v in cls.items() if v)
@@ -334,10 +356,10 @@ def incident_section(inc):
     return f"""<h2 id="incidents">Incident ledger</h2>
 <div class="prose"><p>The honeypot's alerts become incidents in Microsoft Sentinel. A playbook enriches every
 incident and closes the clear-cut Low ones; the rest wait for an analyst. These are the ones I triaged and closed
-myself, counted from Sentinel's own <code>SecurityIncident</code> log (who changed the status, and when). Bulk
-cleanups and test incidents are left out.</p></div>
+myself, counted from Sentinel's own <code>SecurityIncident</code> log (who changed the status, and when).
+Incidents bulk-closed when the SOAR automation went live, and test incidents, are left out.{BULK_NOTE if inc.get("bulk_closes") else ""}</p></div>
 <p class="meta">{plural(inc["incidents"], "incident")} since {e(inc["since"])} ·
-{inc["closed_by_playbook"]:,} closed by my playbook · {inc["closed_by_me"]:,} closed by me ·
+{inc["closed_by_playbook"]:,} closed by my playbook · {inc["closed_by_me"]:,} closed by me ({close_breakdown(inc)}) ·
 {inc["open"]:,} still open · updated {e(inc["generated_at"][:10])}</p>
 <div class="prose"><table><thead><tr><th>My verdict</th><th>Incidents</th></tr></thead><tbody>{rows}</tbody></table>
 {"<table><thead><tr><th>Day</th><th>Closed by me</th></tr></thead><tbody>" + drows + "</tbody></table>" if drows else ""}
