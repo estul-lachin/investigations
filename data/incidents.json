@@ -1,19 +1,29 @@
 {
- "generated_at": "2026-11-13T06:25:30Z",
+ "generated_at": "2026-11-15T05:51:26Z",
  "since": "2026-11-09",
- "incidents": 353,
- "open": 269,
- "closed_by_playbook": 78,
- "closed_by_me": 6,
- "with_my_comment": 6,
- "close_minutes_median": 3398,
+ "incidents": 470,
+ "open": 13,
+ "closed_by_playbook": 102,
+ "closed_by_me": 355,
+ "with_my_comment": 355,
+ "close_minutes_median": 4917,
  "classification": {
-  "True positive: suspicious activity": 6
+  "True positive: suspicious activity": 342,
+  "False positive: inaccurate data": 11,
+  "Benign positive: suspicious but expected": 2
  },
  "daily": [
   {
    "day": "2026-11-13",
-   "closed_by_me": 6
+   "closed_by_me": 7
+  },
+  {
+   "day": "2026-11-14",
+   "closed_by_me": 333
+  },
+  {
+   "day": "2026-11-15",
+   "closed_by_me": 15
   }
  ]
 }
