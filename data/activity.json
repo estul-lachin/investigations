@@ -1,8 +1,17 @@
 {
- "generated_at": "2026-11-12T18:53:43Z",
- "source": "",
- "days": {},
+ "generated_at": "2026-11-15T06:02:50Z",
+ "source": "Microsoft Sentinel",
+ "days": {
+  "2026-11-13": 291,
+  "2026-11-14": 57,
+  "2026-11-15": 5
+ },
  "by_source": {
-  "Splunk": {}
+  "Splunk": {},
+  "Microsoft Sentinel": {
+   "2026-11-13": 291,
+   "2026-11-14": 57,
+   "2026-11-15": 5
+  }
  }
 }
