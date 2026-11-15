@@ -217,12 +217,12 @@ def page(title, body, depth, current="", description=DESCRIPTION):
 <body>
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="https://uig.me/">{OWNER}</a>
+    <div class="crumb"><a class="brand" href="https://uig.me/">Estul Lachin</a><a class="section" href="{home}">Investigations</a></div>
     <nav>
-      <a href="https://lab.uig.me/">Labs</a>
-      <a href="https://honeypot.uig.me/">Honeypot</a>
-      <a href="https://detections.uig.me/">Detections</a>
-      <a href="{home}" aria-current="page">Guide</a>
+      <a href="https://uig.me/#work" aria-current="page">Work</a>
+      <a href="https://uig.me/incidents/">Incident reports</a>
+      <a href="https://uig.me/about/">About</a>
+      <a href="https://uig.me/Estul-Lachin-Resume.pdf">Résumé</a>
     </nav>
   </div>
 </header>
