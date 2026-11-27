@@ -6,10 +6,13 @@
 
 - name: CompTIA Security+
   issuer: CompTIA
+  date: 2026-06-13
   verify: https://www.credly.com/badges/0ad03319-76a9-4370-ad02-18248eb24f2d/public_url
 - name: CompTIA A+
   issuer: CompTIA
+  date: 2026-11-26
   verify: https://www.credly.com/badges/264b7626-2369-47c3-bcc1-269dbd2f9321/public_url
 - name: Google IT Support Professional Certificate
   issuer: Google
+  date: 2026-10-26
   verify: https://www.credly.com/badges/922b8039-3667-49e6-b933-8e15fd46b0fe/public_url
