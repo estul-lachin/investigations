@@ -495,6 +495,8 @@ ALLOWED_NETS = (r"^(10|127)\.", r"^192\.168\.", r"^172\.(1[6-9]|2\d|3[01])\.", r
 IPV4 = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z.]{2,}")
 GUID = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
+# Credly badge IDs are public by design (certs.yml verify links); they are not tenant or workspace IDs.
+CREDLY_BADGE = re.compile(r"https://www\.credly\.com/badges/[0-9a-f-]{36}/public_url")
 
 
 def leak_scan(site):
@@ -507,7 +509,7 @@ def leak_scan(site):
             if all(int(o) <= 255 for o in ip.split(".")) and not any(re.match(n, ip) for n in ALLOWED_NETS):
                 problems.append(f"{f.relative_to(site)}: public IP {ip}")
         problems += [f"{f.relative_to(site)}: email {m}" for m in EMAIL.findall(text)]
-        problems += [f"{f.relative_to(site)}: GUID {m}" for m in GUID.findall(text)]
+        problems += [f"{f.relative_to(site)}: GUID {m}" for m in GUID.findall(CREDLY_BADGE.sub("", text))]
     return problems
 
 
