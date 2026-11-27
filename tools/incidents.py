@@ -54,7 +54,7 @@ SecurityIncident
     + iff(CloserKind == "person" and isnotempty(ClassificationComment), 1, 0)
 | project Day = format_datetime(FirstClosed, "yyyy-MM-dd"), Status, Classification, ClassificationReason,
     CloserKind, MyComments, Minutes = datetime_diff("minute", FirstClosed, CreatedTime),
-    Closed = format_datetime(FirstClosed, "yyyy-MM-ddTHH:mm:ss")
+    Closed = format_datetime(FirstClosed, "yyyy-MM-dd HH:mm:ss")
 """
 
 VERDICTS = {  # Sentinel classification + reason -> plain words
@@ -106,7 +106,7 @@ BATCH_MIN = 10
 
 def batches(mine):
     """Split my closes into bulk runs and the rest. Returns (individual rows, [{"day", "count"}])."""
-    timed = sorted((datetime.datetime.fromisoformat(r["Closed"]), r) for r in mine if r.get("Closed"))
+    timed = sorted(((datetime.datetime.fromisoformat(r["Closed"]), r) for r in mine if r.get("Closed")), key=lambda x: x[0])
     runs, cur = [], []
     for t, r in timed:
         if cur and t - cur[-1][0] > BATCH_GAP:
