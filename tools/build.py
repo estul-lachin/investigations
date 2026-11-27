@@ -35,7 +35,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://uig.me/investigations"
-REPO = "https://github.com/estul-lachin/uig-guide"
+REPO = "https://github.com/estul-lachin/investigations"
 OWNER = "Estul Lachin"
 TOOLS = {"splunk": "Splunk", "sentinel": "Microsoft Sentinel", "wazuh": "Wazuh"}
 QUERY_LANG = {"splunk": "SPL", "sentinel": "KQL", "wazuh": "DQL + OpenSearch query"}
